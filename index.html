@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Anatomy Lab Quiz</title>
+<title>Aleena's Anatomy Study</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:100vh}
@@ -43,17 +43,11 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 .lb-star{font-size:11px;line-height:1;opacity:0.45;cursor:pointer;flex-shrink:0;transition:opacity .1s,transform .1s}
 .lb-star:hover{opacity:1;transform:scale(1.2)}
 .lb-star.on{opacity:1}
-
-/* Multiple choice quiz mode box states */
 .lb.mq-idle{background:rgba(10,30,60,0.82);border:1.5px solid #1a3a6a;display:flex;align-items:center;justify-content:center;color:#3a6aaa;font-size:10px;font-weight:700;cursor:default}
-.lb.mq-active{background:rgba(20,80,200,0.9);border:2px solid #4a9aff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;cursor:default;
-  box-shadow:0 0 0 3px rgba(74,154,255,0.3);
-  animation:pulse 1.2s ease-in-out infinite}
+.lb.mq-active{background:rgba(20,80,200,0.9);border:2px solid #4a9aff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;cursor:default;box-shadow:0 0 0 3px rgba(74,154,255,0.3);animation:pulse 1.2s ease-in-out infinite}
 .lb.mq-correct{background:rgba(20,140,60,0.92);border:2px solid #30cc70;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;cursor:default;padding:2px 3px;text-align:center;line-height:1.2;word-break:break-word}
 .lb.mq-wrong{background:rgba(180,30,30,0.92);border:2px solid #e05050;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;cursor:default;padding:2px 3px;text-align:center;line-height:1.2;word-break:break-word}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(74,154,255,0.3)}50%{box-shadow:0 0 0 5px rgba(74,154,255,0.5)}}
-
-/* MC options panel */
 #mc-panel{display:none;margin-top:12px}
 #mc-progress{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 #mc-progress-bar-wrap{flex:1;background:#1a1a1a;border-radius:4px;height:4px}
@@ -68,8 +62,6 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 .mc-opt.correct{background:#0a2a14;border-color:#1e7a3e;color:#4dba6d;font-weight:500}
 .mc-opt.wrong{background:#2a0a0a;border-color:#7a2020;color:#cc5050}
 .mc-opt.reveal{background:#0a1a10;border-color:#1a5a2e;color:#3a9a56}
-
-/* Results panel */
 #mc-results{display:none;background:#111;border:1px solid #222;border-radius:10px;padding:1.25rem;margin-top:12px}
 #mc-results h3{font-size:15px;font-weight:500;color:#ccc;margin-bottom:1rem}
 #mc-score-row{display:flex;gap:10px;margin-bottom:1rem}
@@ -88,7 +80,6 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 .mc-row .mr-t.bad{color:#994444}
 #mc-results button{background:#0e1a2e;border:1px solid #2a5a8a;color:#6ab0f0;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;margin-right:8px;transition:all .15s}
 #mc-results button:hover{background:#142040;border-color:#3a6ab0}
-
 #controls{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
 #controls button{background:#181818;border:1px solid #2a2a2a;color:#aaa;padding:7px 14px;border-radius:7px;cursor:pointer;font-size:12px;transition:all .15s}
 #controls button:hover{background:#222;border-color:#444;color:#ddd}
@@ -120,7 +111,6 @@ kbd{background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:1px 5px;f
   <div id="mode-bar">
     <button id="btn-cover" class="active" onclick="setMode('cover')">Cover</button>
     <button id="btn-reveal" onclick="setMode('reveal')">Reveal all</button>
-    <button id="btn-quiz" onclick="setMode('quiz')">Self-quiz</button>
     <button id="btn-mc" class="mq-mode" onclick="setMode('mc')">&#9654; Multiple choice</button>
     <button id="btn-starred" class="starred-mode" onclick="toggleStarredPanel()">&#9733; Starred <span id="star-badge"></span></button>
   </div>
@@ -142,18 +132,14 @@ kbd{background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:1px 5px;f
   <button class="go" onclick="nextPage()">Next &#8594;</button>
 </div>
 <div id="answer-grid"></div>
-
-<!-- MC quiz panel -->
 <div id="mc-panel">
   <div id="mc-progress">
     <div id="mc-progress-bar-wrap"><div id="mc-progress-fill" style="width:0%"></div></div>
     <span id="mc-progress-text"></span>
   </div>
-  <div id="mc-question">Which structure is highlighted?</div>
+  <div id="mc-question">Which structure is <span>highlighted</span> on the diagram?</div>
   <div id="mc-options"></div>
 </div>
-
-<!-- MC results -->
 <div id="mc-results">
   <h3>Slide complete</h3>
   <div id="mc-score-row">
@@ -163,10 +149,9 @@ kbd{background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:1px 5px;f
   </div>
   <div id="mc-breakdown"></div>
   <button onclick="startMC()">Try again</button>
-  <button onclick="nextPage();startMC()">Next slide &#8594;</button>
+  <button onclick="nextPage()">Next slide &#8594;</button>
   <button onclick="setMode('cover')" style="background:#1a1a1a;border-color:#333;color:#888">Exit quiz</button>
 </div>
-
 <div id="starred-panel">
   <h3>&#9733; Starred structures — review these</h3>
   <div id="starred-list"></div>
@@ -206,7 +191,6 @@ let ci=0, rev={}, mode='cover';
 let starred={};
 try{starred=JSON.parse(localStorage.getItem('anat_starred')||'{}');}catch(e){}
 
-// MC quiz state
 let mcQueue=[], mcIdx=0, mcAnswers=[], mcSelected=null, mcOptions=[];
 
 function saveStarred(){try{localStorage.setItem('anat_starred',JSON.stringify(starred));}catch(e){}}
@@ -226,19 +210,18 @@ function setMode(m){
   mode=m;
   document.getElementById('btn-cover').className=m==='cover'?'active':'';
   document.getElementById('btn-reveal').className=m==='reveal'?'active':'';
-  document.getElementById('btn-quiz').className=m==='quiz'?'active':'';
   document.getElementById('btn-mc').className='mq-mode'+(m==='mc'?' active':'');
 
-  document.getElementById('controls').style.display=m==='mc'?'none':'flex';
-  document.getElementById('answer-grid').style.display=m==='mc'?'none':'grid';
-  document.getElementById('mc-panel').style.display=m==='mc'?'block':'none';
+  const isMC=m==='mc';
+  document.getElementById('controls').style.display=isMC?'none':'flex';
+  document.getElementById('answer-grid').style.display=isMC?'none':'grid';
+  document.getElementById('mc-panel').style.display=isMC?'block':'none';
   document.getElementById('mc-results').style.display='none';
 
   const inst=document.getElementById('instructions');
-  if(m==='cover')inst.innerHTML='<kbd>&#8592; &#8594;</kbd> navigate &nbsp; <kbd>R</kbd> reveal all &nbsp; <kbd>Esc</kbd> reset &nbsp; Click &#9733; on a revealed label to flag';
-  else if(m==='reveal'){inst.innerHTML='All labels shown.';revealAll();}
-  else if(m==='quiz'){inst.innerHTML='Think of the label, then click to check. Star anything you struggle with.';resetPage();}
-  else if(m==='mc'){inst.innerHTML='Multiple choice: identify the highlighted label.';startMC();}
+  if(m==='cover') inst.innerHTML='<kbd>&#8592; &#8594;</kbd> navigate &nbsp;<kbd>R</kbd> reveal all &nbsp;<kbd>Esc</kbd> reset &nbsp; Click &#9733; on a label to flag it';
+  else if(m==='reveal'){inst.innerHTML='All labels shown. Click &#9733; to flag for review.';revealAll();}
+  else if(m==='mc'){inst.innerHTML='Identify the <span style="color:#6ab0f0">highlighted</span> structure from the options below.';startMC();}
   render();
 }
 
@@ -248,26 +231,21 @@ function startMC(){
   mcIdx=0; mcAnswers=[]; mcSelected=null;
   document.getElementById('mc-results').style.display='none';
   document.getElementById('mc-panel').style.display='block';
-  renderMC();
-  render();
+  renderMC(); render();
 }
 
 function renderMC(){
   const p=PAGES[ci];
   const tot=mcQueue.length;
-  const pct=Math.round(mcIdx/tot*100);
-  document.getElementById('mc-progress-fill').style.width=pct+'%';
-  document.getElementById('mc-progress-text').textContent=`${mcIdx}/${tot}`;
-  document.getElementById('mc-question').innerHTML=`Which structure is <span>highlighted</span> on the diagram?`;
+  document.getElementById('mc-progress-fill').style.width=Math.round(mcIdx/tot*100)+'%';
+  document.getElementById('mc-progress-text').textContent=`${mcIdx} / ${tot}`;
 
-  // Build 4 options: correct + 3 random others from same slide
   const correctIdx=mcQueue[mcIdx];
   const correct=p.boxes[correctIdx].label;
   const others=shuffle(p.boxes.map((b,i)=>i).filter(i=>i!==correctIdx)).slice(0,3).map(i=>p.boxes[i].label);
   mcOptions=shuffle([correct,...others]);
 
-  const optEl=document.getElementById('mc-options');
-  optEl.innerHTML=mcOptions.map((opt,i)=>
+  document.getElementById('mc-options').innerHTML=mcOptions.map((opt,i)=>
     `<button class="mc-opt" onclick="chooseMC(${i})">${opt}</button>`
   ).join('');
   mcSelected=null;
@@ -278,28 +256,23 @@ function chooseMC(optIdx){
   if(mcSelected!==null)return;
   mcSelected=optIdx;
   const p=PAGES[ci];
-  const correctIdx=mcQueue[mcIdx];
-  const correct=p.boxes[correctIdx].label;
+  const correct=p.boxes[mcQueue[mcIdx]].label;
   const chosen=mcOptions[optIdx];
-  const isCorrect=chosen===correct;
+  const ok=chosen===correct;
+  mcAnswers.push({boxIdx:mcQueue[mcIdx],label:correct,chosen,correct:ok});
 
-  mcAnswers.push({boxIdx:correctIdx, label:correct, chosen, correct:isCorrect});
-
-  // Style buttons
   const btns=document.getElementById('mc-options').querySelectorAll('.mc-opt');
   btns.forEach((b,i)=>{
     b.disabled=true;
     if(mcOptions[i]===correct) b.className='mc-opt '+(i===optIdx?'correct':'reveal');
     else if(i===optIdx) b.className='mc-opt wrong';
   });
-
-  render(); // update box colors
-
+  render();
   setTimeout(()=>{
     mcIdx++;
     if(mcIdx>=mcQueue.length) showMCResults();
     else renderMC();
-  }, isCorrect?700:1200);
+  }, ok?700:1200);
 }
 
 function showMCResults(){
@@ -308,13 +281,12 @@ function showMCResults(){
   res.style.display='block';
   const correct=mcAnswers.filter(a=>a.correct).length;
   const wrong=mcAnswers.length-correct;
-  const pct=Math.round(correct/mcAnswers.length*100);
   document.getElementById('res-correct').textContent=correct;
   document.getElementById('res-wrong').textContent=wrong;
-  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-pct').textContent=Math.round(correct/mcAnswers.length*100)+'%';
   document.getElementById('mc-breakdown').innerHTML=mcAnswers.map((a,i)=>`
     <div class="mc-row">
-      <span class="mr-n ${a.correct?'ok':'bad'}">${mcQueue[i]+1}</span>
+      <span class="mr-n ${a.correct?'ok':'bad'}">${a.boxIdx+1}</span>
       <span class="mr-t ${a.correct?'ok':'bad'}">${a.label}${!a.correct?`<br><span style="font-size:10px;color:#664444">✗ ${a.chosen}</span>`:''}</span>
     </div>`).join('');
   render();
@@ -323,18 +295,16 @@ function showMCResults(){
 function gr(){if(!rev[ci])rev[ci]={};return rev[ci];}
 
 function computeRevealedStyle(label,bwPct,bhPct,imgW,imgH){
-  const origW=bwPct/100*imgW, origH=bhPct/100*imgH, len=label.length;
+  const origW=bwPct/100*imgW,origH=bhPct/100*imgH,len=label.length;
   let fs=11;
   if(len>28)fs=9; else if(len>18)fs=10;
-  const charW=fs*0.58, singleLineW=len*charW+10;
+  const charW=fs*0.58,singleLineW=len*charW+10;
   const boxW=Math.max(origW,Math.min(singleLineW,240));
-  const lines=Math.ceil((len*charW)/(boxW-10));
-  return{width:Math.round(boxW)+'px',height:Math.round(Math.max(origH,lines*fs*1.4+20))+'px',fontSize:fs+'px'};
+  return{width:Math.round(boxW)+'px',height:Math.round(Math.max(origH,Math.ceil((len*charW)/(boxW-10))*fs*1.4+20))+'px',fontSize:fs+'px'};
 }
 
 function getImgDims(){
-  const wrap=document.getElementById('diagram-wrap');
-  const p=PAGES[ci];
+  const wrap=document.getElementById('diagram-wrap'),p=PAGES[ci];
   const imgW=wrap.offsetWidth||900;
   return{imgW,imgH:imgW*(p.imgH/p.imgW)};
 }
@@ -349,47 +319,32 @@ function render(){
   const{imgW,imgH}=getImgDims();
   const isMC=mode==='mc';
 
-  // Determine MC box states
-  let mcActive=-1, mcDone={}, mcWrong=-1;
-  if(isMC){
-    mcAnswers.forEach((a,i)=>{mcDone[mcQueue[i]]={correct:a.correct,label:a.label};});
-    if(mcIdx<mcQueue.length && mcSelected===null) mcActive=mcQueue[mcIdx];
-    if(mcSelected!==null && mcIdx<mcQueue.length){
-      mcActive=mcQueue[mcIdx];
-      const lastAns=mcAnswers[mcAnswers.length-1];
-      if(lastAns && !lastAns.correct) mcWrong=mcActive;
-    }
-  }
+  let mcDone={};
+  if(isMC) mcAnswers.forEach((a,i)=>{mcDone[mcQueue[i]]={correct:a.correct};});
+  const mcActive=isMC&&mcIdx<mcQueue.length?mcQueue[mcIdx]:-1;
 
   p.boxes.forEach((b,i)=>{
     const el=document.createElement('div');
     const k=starKey(ci,i);
     const isStar=!!starred[k];
+    el.style.left=b.x+'%'; el.style.top=b.y+'%';
+    el.style.minWidth='18px'; el.style.minHeight='14px';
 
     if(isMC){
+      el.style.width=b.w+'%'; el.style.height=b.h+'%';
       if(mcDone[i]!==undefined){
         el.className='lb '+(mcDone[i].correct?'mq-correct':'mq-wrong');
-        el.style.left=b.x+'%'; el.style.top=b.y+'%';
-        el.style.width=b.w+'%'; el.style.height=b.h+'%';
-        el.style.minWidth='18px'; el.style.minHeight='14px';
         el.textContent=i+1;
       } else if(i===mcActive){
         el.className='lb mq-active';
-        el.style.left=b.x+'%'; el.style.top=b.y+'%';
-        el.style.width=b.w+'%'; el.style.height=b.h+'%';
-        el.style.minWidth='18px'; el.style.minHeight='14px';
         el.textContent='?';
       } else {
         el.className='lb mq-idle';
-        el.style.left=b.x+'%'; el.style.top=b.y+'%';
-        el.style.width=b.w+'%'; el.style.height=b.h+'%';
-        el.style.minWidth='18px'; el.style.minHeight='14px';
         el.textContent=i+1;
       }
     } else {
       const isRev=!!r[i];
       el.className='lb '+(isRev?'revealed':'covered')+(isStar?' flagged':'');
-      el.style.left=b.x+'%'; el.style.top=b.y+'%';
       if(isRev){
         const s=computeRevealedStyle(b.label,b.w,b.h,imgW,imgH);
         el.style.width=s.width; el.style.height=s.height; el.style.fontSize=s.fontSize;
@@ -398,14 +353,12 @@ function render(){
         const star=document.createElement('span');
         star.className='lb-star'+(isStar?' on':'');
         star.textContent=isStar?'★':'☆';
-        star.title=isStar?'Unstar':'Star for review';
         star.onclick=(e)=>toggleStar(ci,i,b.label,e);
         el.appendChild(lbl); el.appendChild(star);
         el.onclick=()=>{r[i]=!r[i];if(!r[i])delete r[i];render();};
         el.title=b.label;
       } else {
         el.style.width=b.w+'%'; el.style.height=b.h+'%';
-        el.style.minWidth='18px'; el.style.minHeight='14px';
         el.textContent=i+1;
         el.onclick=()=>{r[i]=true;render();};
       }
@@ -413,10 +366,9 @@ function render(){
     wrap.appendChild(el);
   });
 
-  if(!isMC){renderAnswers();renderThumbs();}
-  else renderThumbs();
-
-  const rc=Object.keys(r).length, tot=p.boxes.length;
+  if(!isMC){renderAnswers();}
+  renderThumbs();
+  const rc=Object.keys(r).length,tot=p.boxes.length;
   document.getElementById('score-bar').textContent=(!isMC&&tot)?rc+'/'+tot+' revealed':'';
   const sc=Object.keys(starred).length;
   document.getElementById('star-count').textContent=sc?'★ '+sc+' starred':'';
@@ -460,7 +412,7 @@ function renderStarredPanel(){
   const items=Object.values(starred);
   const list=document.getElementById('starred-list');
   if(!items.length){
-    list.innerHTML='<div style="color:#664422;font-size:12px;grid-column:1/-1">No starred structures yet.</div>';
+    list.innerHTML='<div style="color:#664422;font-size:12px;grid-column:1/-1">No starred structures yet. Reveal a label and click ☆ to flag it.</div>';
     return;
   }
   const byPage={};
@@ -474,25 +426,9 @@ function renderStarredPanel(){
   ).join('');
 }
 
-function goTo(i){
-  ci=i;
-  if(mode==='mc')startMC();
-  else render();
-}
-function nextPage(){
-  if(ci<PAGES.length-1){
-    ci++;
-    if(mode==='mc')startMC();
-    else render();
-  }
-}
-function prevPage(){
-  if(ci>0){
-    ci--;
-    if(mode==='mc')startMC();
-    else render();
-  }
-}
+function goTo(i){ci=i;if(mode==='mc')startMC();else render();}
+function nextPage(){if(ci<PAGES.length-1){ci++;if(mode==='mc')startMC();else render();}}
+function prevPage(){if(ci>0){ci--;if(mode==='mc')startMC();else render();}}
 
 document.addEventListener('keydown',e=>{
   if(mode==='mc')return;
@@ -502,7 +438,6 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Escape')resetPage();
 });
 window.addEventListener('resize',()=>render());
-
 setMode('cover');
 </script>
 </body>
