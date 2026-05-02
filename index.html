@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aleena's Anatomy Lab Quiz Study</title>
+<title>Anatomy Lab Quiz</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:100vh}
@@ -14,6 +14,8 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 #mode-bar button{background:#1a1a1a;border:1px solid #2a2a2a;color:#888;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s}
 #mode-bar button:hover{border-color:#444;color:#ccc}
 #mode-bar button.active{background:#0d2a18;border-color:#1e6636;color:#3db864}
+#mode-bar button.mq-mode{background:#0e1a2e;border-color:#1a4a7a;color:#4a8ecc}
+#mode-bar button.mq-mode.active{background:#0a1428;border-color:#2a6ab0;color:#6ab0f0}
 #mode-bar button.starred-mode{background:#2a1f08;border-color:#7a5010;color:#e8a030}
 #mode-bar button.starred-mode.active{background:#2a1a04;border-color:#c07820;color:#f0b840}
 #nav{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
@@ -30,7 +32,7 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 .thumb .tstar{position:absolute;top:-3px;right:-3px;font-size:8px;line-height:1}
 #diagram-wrap{position:relative;width:100%;user-select:none;border-radius:10px;overflow:hidden;background:#111}
 #diagram-wrap img{width:100%;display:block}
-.lb{position:absolute;cursor:pointer;border-radius:4px;transition:background .12s,border-color .12s;z-index:5}
+.lb{position:absolute;cursor:pointer;border-radius:4px;transition:background .12s,border-color .12s,box-shadow .12s;z-index:5}
 .lb.covered{background:rgba(20,160,70,0.9);border:1.5px solid #1ea84a;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700}
 .lb.covered:hover{background:rgba(25,185,80,0.97);border-color:#22cc55}
 .lb.covered.flagged{background:rgba(180,100,10,0.9);border-color:#c07010}
@@ -41,6 +43,52 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 .lb-star{font-size:11px;line-height:1;opacity:0.45;cursor:pointer;flex-shrink:0;transition:opacity .1s,transform .1s}
 .lb-star:hover{opacity:1;transform:scale(1.2)}
 .lb-star.on{opacity:1}
+
+/* Multiple choice quiz mode box states */
+.lb.mq-idle{background:rgba(10,30,60,0.82);border:1.5px solid #1a3a6a;display:flex;align-items:center;justify-content:center;color:#3a6aaa;font-size:10px;font-weight:700;cursor:default}
+.lb.mq-active{background:rgba(20,80,200,0.9);border:2px solid #4a9aff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;cursor:default;
+  box-shadow:0 0 0 3px rgba(74,154,255,0.3);
+  animation:pulse 1.2s ease-in-out infinite}
+.lb.mq-correct{background:rgba(20,140,60,0.92);border:2px solid #30cc70;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;cursor:default;padding:2px 3px;text-align:center;line-height:1.2;word-break:break-word}
+.lb.mq-wrong{background:rgba(180,30,30,0.92);border:2px solid #e05050;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;cursor:default;padding:2px 3px;text-align:center;line-height:1.2;word-break:break-word}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(74,154,255,0.3)}50%{box-shadow:0 0 0 5px rgba(74,154,255,0.5)}}
+
+/* MC options panel */
+#mc-panel{display:none;margin-top:12px}
+#mc-progress{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#mc-progress-bar-wrap{flex:1;background:#1a1a1a;border-radius:4px;height:4px}
+#mc-progress-fill{height:4px;background:#4a8ecc;border-radius:4px;transition:width .3s}
+#mc-progress-text{font-size:12px;color:#555;white-space:nowrap}
+#mc-question{font-size:13px;color:#aaa;margin-bottom:10px}
+#mc-question span{color:#6ab0f0;font-weight:500}
+#mc-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mc-opt{background:#141414;border:1px solid #252525;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:12px;color:#bbb;text-align:left;transition:all .15s;line-height:1.3}
+.mc-opt:hover:not(:disabled){background:#1e1e1e;border-color:#3a3a3a;color:#eee}
+.mc-opt:disabled{cursor:default}
+.mc-opt.correct{background:#0a2a14;border-color:#1e7a3e;color:#4dba6d;font-weight:500}
+.mc-opt.wrong{background:#2a0a0a;border-color:#7a2020;color:#cc5050}
+.mc-opt.reveal{background:#0a1a10;border-color:#1a5a2e;color:#3a9a56}
+
+/* Results panel */
+#mc-results{display:none;background:#111;border:1px solid #222;border-radius:10px;padding:1.25rem;margin-top:12px}
+#mc-results h3{font-size:15px;font-weight:500;color:#ccc;margin-bottom:1rem}
+#mc-score-row{display:flex;gap:10px;margin-bottom:1rem}
+.mc-stat{flex:1;background:#161616;border-radius:8px;padding:10px;text-align:center;border:1px solid #222}
+.mc-stat .sv{font-size:26px;font-weight:500;margin-bottom:2px}
+.mc-stat .sl{font-size:11px}
+.sv.green{color:#3db864}.sv.red{color:#cc5050}.sv.blue{color:#4a8ecc}
+.sl.green{color:#2a6a3a}.sl.red{color:#7a3030}.sl.blue{color:#2a5a8a}
+#mc-breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-bottom:1rem}
+.mc-row{background:#141414;border-radius:6px;padding:7px 10px;font-size:11px;display:flex;gap:8px;align-items:flex-start;border:1px solid #1e1e1e}
+.mc-row .mr-n{width:20px;height:20px;min-width:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.mc-row .mr-n.ok{background:#0a2a14;color:#3db864}
+.mc-row .mr-n.bad{background:#2a0a0a;color:#cc5050}
+.mc-row .mr-t{color:#888;line-height:1.3;flex:1}
+.mc-row .mr-t.ok{color:#4a9a5a}
+.mc-row .mr-t.bad{color:#994444}
+#mc-results button{background:#0e1a2e;border:1px solid #2a5a8a;color:#6ab0f0;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;margin-right:8px;transition:all .15s}
+#mc-results button:hover{background:#142040;border-color:#3a6ab0}
+
 #controls{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
 #controls button{background:#181818;border:1px solid #2a2a2a;color:#aaa;padding:7px 14px;border-radius:7px;cursor:pointer;font-size:12px;transition:all .15s}
 #controls button:hover{background:#222;border-color:#444;color:#ddd}
@@ -53,8 +101,7 @@ body{font-family:system-ui,sans-serif;background:#0e0e0e;color:#ddd;min-height:1
 .ai .as:hover,.ai .as.on{opacity:1}
 .ai.done .n{background:#0a1f10;color:#2a7a3a}
 .ai.done .t{color:#4a9a5a}
-.ai.flagged{border-color:#6a3808}
-.ai.flagged .n{background:#2a1004;color:#c07020}
+.ai.flagged{border-color:#6a3808}.ai.flagged .n{background:#2a1004;color:#c07020}
 #starred-panel{display:none;background:#181208;border:1px solid #4a2e08;border-radius:10px;padding:1rem;margin-top:12px}
 #starred-panel h3{font-size:13px;font-weight:500;color:#c08020;margin-bottom:10px}
 #starred-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
@@ -73,7 +120,8 @@ kbd{background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:1px 5px;f
   <div id="mode-bar">
     <button id="btn-cover" class="active" onclick="setMode('cover')">Cover</button>
     <button id="btn-reveal" onclick="setMode('reveal')">Reveal all</button>
-    <button id="btn-quiz" onclick="setMode('quiz')">Quiz mode</button>
+    <button id="btn-quiz" onclick="setMode('quiz')">Self-quiz</button>
+    <button id="btn-mc" class="mq-mode" onclick="setMode('mc')">&#9654; Multiple choice</button>
     <button id="btn-starred" class="starred-mode" onclick="toggleStarredPanel()">&#9733; Starred <span id="star-badge"></span></button>
   </div>
 </div>
@@ -86,7 +134,7 @@ kbd{background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:1px 5px;f
   <button onclick="resetPage()" style="margin-left:auto;font-size:11px">Reset</button>
 </div>
 <div id="page-thumbs"></div>
-<div id="instructions"><kbd>&#8592; &#8594;</kbd> navigate &nbsp; <kbd>R</kbd> reveal all &nbsp; <kbd>Esc</kbd> reset &nbsp; Click &#9733; on a revealed label to flag for review</div>
+<div id="instructions"></div>
 <div id="diagram-wrap"><img id="diagram-img" src="" alt="Anatomy diagram"></div>
 <div id="controls">
   <button onclick="revealAll()">Reveal all</button>
@@ -94,6 +142,31 @@ kbd{background:#1a1a1a;border:1px solid #333;border-radius:3px;padding:1px 5px;f
   <button class="go" onclick="nextPage()">Next &#8594;</button>
 </div>
 <div id="answer-grid"></div>
+
+<!-- MC quiz panel -->
+<div id="mc-panel">
+  <div id="mc-progress">
+    <div id="mc-progress-bar-wrap"><div id="mc-progress-fill" style="width:0%"></div></div>
+    <span id="mc-progress-text"></span>
+  </div>
+  <div id="mc-question">Which structure is highlighted?</div>
+  <div id="mc-options"></div>
+</div>
+
+<!-- MC results -->
+<div id="mc-results">
+  <h3>Slide complete</h3>
+  <div id="mc-score-row">
+    <div class="mc-stat"><div class="sv green" id="res-correct">0</div><div class="sl green">correct</div></div>
+    <div class="mc-stat"><div class="sv red" id="res-wrong">0</div><div class="sl red">missed</div></div>
+    <div class="mc-stat"><div class="sv blue" id="res-pct">0%</div><div class="sl blue">score</div></div>
+  </div>
+  <div id="mc-breakdown"></div>
+  <button onclick="startMC()">Try again</button>
+  <button onclick="nextPage();startMC()">Next slide &#8594;</button>
+  <button onclick="setMode('cover')" style="background:#1a1a1a;border-color:#333;color:#888">Exit quiz</button>
+</div>
+
 <div id="starred-panel">
   <h3>&#9733; Starred structures — review these</h3>
   <div id="starred-list"></div>
@@ -129,13 +202,15 @@ const PAGES=[
 
 ];
 
-let ci=0,rev={},mode='cover';
+let ci=0, rev={}, mode='cover';
 let starred={};
 try{starred=JSON.parse(localStorage.getItem('anat_starred')||'{}');}catch(e){}
 
+// MC quiz state
+let mcQueue=[], mcIdx=0, mcAnswers=[], mcSelected=null, mcOptions=[];
+
 function saveStarred(){try{localStorage.setItem('anat_starred',JSON.stringify(starred));}catch(e){}}
 function starKey(pi,bi){return pi+'-'+bi;}
-
 function toggleStar(pi,bi,label,e){
   if(e)e.stopPropagation();
   const k=starKey(pi,bi);
@@ -145,31 +220,116 @@ function toggleStar(pi,bi,label,e){
   if(document.getElementById('starred-panel').style.display==='block')renderStarredPanel();
 }
 
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
 function setMode(m){
   mode=m;
-  ['cover','reveal','quiz'].forEach(x=>document.getElementById('btn-'+x).className=x===m?'active':'');
+  document.getElementById('btn-cover').className=m==='cover'?'active':'';
+  document.getElementById('btn-reveal').className=m==='reveal'?'active':'';
+  document.getElementById('btn-quiz').className=m==='quiz'?'active':'';
+  document.getElementById('btn-mc').className='mq-mode'+(m==='mc'?' active':'');
+
+  document.getElementById('controls').style.display=m==='mc'?'none':'flex';
+  document.getElementById('answer-grid').style.display=m==='mc'?'none':'grid';
+  document.getElementById('mc-panel').style.display=m==='mc'?'block':'none';
+  document.getElementById('mc-results').style.display='none';
+
   const inst=document.getElementById('instructions');
-  if(m==='cover')inst.innerHTML='<kbd>&#8592; &#8594;</kbd> navigate &nbsp; <kbd>R</kbd> reveal all &nbsp; <kbd>Esc</kbd> reset &nbsp; Click &#9733; on a revealed label to flag for review';
-  if(m==='reveal'){inst.innerHTML='All labels shown. Click &#9733; to flag for review.';revealAll();}
-  if(m==='quiz'){inst.innerHTML='Think of the label, then click to check. Star anything you struggle with.';resetPage();}
+  if(m==='cover')inst.innerHTML='<kbd>&#8592; &#8594;</kbd> navigate &nbsp; <kbd>R</kbd> reveal all &nbsp; <kbd>Esc</kbd> reset &nbsp; Click &#9733; on a revealed label to flag';
+  else if(m==='reveal'){inst.innerHTML='All labels shown.';revealAll();}
+  else if(m==='quiz'){inst.innerHTML='Think of the label, then click to check. Star anything you struggle with.';resetPage();}
+  else if(m==='mc'){inst.innerHTML='Multiple choice: identify the highlighted label.';startMC();}
+  render();
+}
+
+function startMC(){
+  const p=PAGES[ci];
+  mcQueue=shuffle(p.boxes.map((_,i)=>i));
+  mcIdx=0; mcAnswers=[]; mcSelected=null;
+  document.getElementById('mc-results').style.display='none';
+  document.getElementById('mc-panel').style.display='block';
+  renderMC();
+  render();
+}
+
+function renderMC(){
+  const p=PAGES[ci];
+  const tot=mcQueue.length;
+  const pct=Math.round(mcIdx/tot*100);
+  document.getElementById('mc-progress-fill').style.width=pct+'%';
+  document.getElementById('mc-progress-text').textContent=`${mcIdx}/${tot}`;
+  document.getElementById('mc-question').innerHTML=`Which structure is <span>highlighted</span> on the diagram?`;
+
+  // Build 4 options: correct + 3 random others from same slide
+  const correctIdx=mcQueue[mcIdx];
+  const correct=p.boxes[correctIdx].label;
+  const others=shuffle(p.boxes.map((b,i)=>i).filter(i=>i!==correctIdx)).slice(0,3).map(i=>p.boxes[i].label);
+  mcOptions=shuffle([correct,...others]);
+
+  const optEl=document.getElementById('mc-options');
+  optEl.innerHTML=mcOptions.map((opt,i)=>
+    `<button class="mc-opt" onclick="chooseMC(${i})">${opt}</button>`
+  ).join('');
+  mcSelected=null;
+  render();
+}
+
+function chooseMC(optIdx){
+  if(mcSelected!==null)return;
+  mcSelected=optIdx;
+  const p=PAGES[ci];
+  const correctIdx=mcQueue[mcIdx];
+  const correct=p.boxes[correctIdx].label;
+  const chosen=mcOptions[optIdx];
+  const isCorrect=chosen===correct;
+
+  mcAnswers.push({boxIdx:correctIdx, label:correct, chosen, correct:isCorrect});
+
+  // Style buttons
+  const btns=document.getElementById('mc-options').querySelectorAll('.mc-opt');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(mcOptions[i]===correct) b.className='mc-opt '+(i===optIdx?'correct':'reveal');
+    else if(i===optIdx) b.className='mc-opt wrong';
+  });
+
+  render(); // update box colors
+
+  setTimeout(()=>{
+    mcIdx++;
+    if(mcIdx>=mcQueue.length) showMCResults();
+    else renderMC();
+  }, isCorrect?700:1200);
+}
+
+function showMCResults(){
+  document.getElementById('mc-panel').style.display='none';
+  const res=document.getElementById('mc-results');
+  res.style.display='block';
+  const correct=mcAnswers.filter(a=>a.correct).length;
+  const wrong=mcAnswers.length-correct;
+  const pct=Math.round(correct/mcAnswers.length*100);
+  document.getElementById('res-correct').textContent=correct;
+  document.getElementById('res-wrong').textContent=wrong;
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('mc-breakdown').innerHTML=mcAnswers.map((a,i)=>`
+    <div class="mc-row">
+      <span class="mr-n ${a.correct?'ok':'bad'}">${mcQueue[i]+1}</span>
+      <span class="mr-t ${a.correct?'ok':'bad'}">${a.label}${!a.correct?`<br><span style="font-size:10px;color:#664444">✗ ${a.chosen}</span>`:''}</span>
+    </div>`).join('');
   render();
 }
 
 function gr(){if(!rev[ci])rev[ci]={};return rev[ci];}
 
 function computeRevealedStyle(label,bwPct,bhPct,imgW,imgH){
-  const origW=bwPct/100*imgW;
-  const origH=bhPct/100*imgH;
-  const len=label.length;
+  const origW=bwPct/100*imgW, origH=bhPct/100*imgH, len=label.length;
   let fs=11;
-  if(len>28)fs=9;
-  else if(len>18)fs=10;
-  const charW=fs*0.58;
-  const singleLineW=len*charW+10;
+  if(len>28)fs=9; else if(len>18)fs=10;
+  const charW=fs*0.58, singleLineW=len*charW+10;
   const boxW=Math.max(origW,Math.min(singleLineW,240));
   const lines=Math.ceil((len*charW)/(boxW-10));
-  const boxH=Math.max(origH,lines*fs*1.4+20);
-  return{width:Math.round(boxW)+'px',height:Math.round(boxH)+'px',fontSize:fs+'px'};
+  return{width:Math.round(boxW)+'px',height:Math.round(Math.max(origH,lines*fs*1.4+20))+'px',fontSize:fs+'px'};
 }
 
 function getImgDims(){
@@ -187,45 +347,77 @@ function render(){
   const wrap=document.getElementById('diagram-wrap');
   const r=gr();
   const{imgW,imgH}=getImgDims();
+  const isMC=mode==='mc';
+
+  // Determine MC box states
+  let mcActive=-1, mcDone={}, mcWrong=-1;
+  if(isMC){
+    mcAnswers.forEach((a,i)=>{mcDone[mcQueue[i]]={correct:a.correct,label:a.label};});
+    if(mcIdx<mcQueue.length && mcSelected===null) mcActive=mcQueue[mcIdx];
+    if(mcSelected!==null && mcIdx<mcQueue.length){
+      mcActive=mcQueue[mcIdx];
+      const lastAns=mcAnswers[mcAnswers.length-1];
+      if(lastAns && !lastAns.correct) mcWrong=mcActive;
+    }
+  }
 
   p.boxes.forEach((b,i)=>{
     const el=document.createElement('div');
-    const isRev=!!r[i];
     const k=starKey(ci,i);
     const isStar=!!starred[k];
-    el.className='lb '+(isRev?'revealed':'covered')+(isStar?' flagged':'');
-    el.style.left=b.x+'%';
-    el.style.top=b.y+'%';
 
-    if(isRev){
-      const s=computeRevealedStyle(b.label,b.w,b.h,imgW,imgH);
-      el.style.width=s.width;
-      el.style.height=s.height;
-      el.style.fontSize=s.fontSize;
-      const lbl=document.createElement('span');
-      lbl.className='lb-label';lbl.textContent=b.label;
-      const star=document.createElement('span');
-      star.className='lb-star'+(isStar?' on':'');
-      star.textContent=isStar?'★':'☆';
-      star.title=isStar?'Unstar':'Star for review';
-      star.onclick=(e)=>toggleStar(ci,i,b.label,e);
-      el.appendChild(lbl);el.appendChild(star);
-      el.onclick=()=>{r[i]=!r[i];if(!r[i])delete r[i];render();};
-      el.title=b.label;
-    }else{
-      el.style.width=b.w+'%';
-      el.style.height=b.h+'%';
-      el.style.minWidth='18px';
-      el.style.minHeight='14px';
-      el.textContent=i+1;
-      el.onclick=()=>{r[i]=true;render();};
+    if(isMC){
+      if(mcDone[i]!==undefined){
+        el.className='lb '+(mcDone[i].correct?'mq-correct':'mq-wrong');
+        el.style.left=b.x+'%'; el.style.top=b.y+'%';
+        el.style.width=b.w+'%'; el.style.height=b.h+'%';
+        el.style.minWidth='18px'; el.style.minHeight='14px';
+        el.textContent=i+1;
+      } else if(i===mcActive){
+        el.className='lb mq-active';
+        el.style.left=b.x+'%'; el.style.top=b.y+'%';
+        el.style.width=b.w+'%'; el.style.height=b.h+'%';
+        el.style.minWidth='18px'; el.style.minHeight='14px';
+        el.textContent='?';
+      } else {
+        el.className='lb mq-idle';
+        el.style.left=b.x+'%'; el.style.top=b.y+'%';
+        el.style.width=b.w+'%'; el.style.height=b.h+'%';
+        el.style.minWidth='18px'; el.style.minHeight='14px';
+        el.textContent=i+1;
+      }
+    } else {
+      const isRev=!!r[i];
+      el.className='lb '+(isRev?'revealed':'covered')+(isStar?' flagged':'');
+      el.style.left=b.x+'%'; el.style.top=b.y+'%';
+      if(isRev){
+        const s=computeRevealedStyle(b.label,b.w,b.h,imgW,imgH);
+        el.style.width=s.width; el.style.height=s.height; el.style.fontSize=s.fontSize;
+        const lbl=document.createElement('span');
+        lbl.className='lb-label'; lbl.textContent=b.label;
+        const star=document.createElement('span');
+        star.className='lb-star'+(isStar?' on':'');
+        star.textContent=isStar?'★':'☆';
+        star.title=isStar?'Unstar':'Star for review';
+        star.onclick=(e)=>toggleStar(ci,i,b.label,e);
+        el.appendChild(lbl); el.appendChild(star);
+        el.onclick=()=>{r[i]=!r[i];if(!r[i])delete r[i];render();};
+        el.title=b.label;
+      } else {
+        el.style.width=b.w+'%'; el.style.height=b.h+'%';
+        el.style.minWidth='18px'; el.style.minHeight='14px';
+        el.textContent=i+1;
+        el.onclick=()=>{r[i]=true;render();};
+      }
     }
     wrap.appendChild(el);
   });
 
-  renderAnswers();renderThumbs();
-  const rc=Object.keys(r).length,tot=p.boxes.length;
-  document.getElementById('score-bar').textContent=tot?rc+'/'+tot+' revealed':'';
+  if(!isMC){renderAnswers();renderThumbs();}
+  else renderThumbs();
+
+  const rc=Object.keys(r).length, tot=p.boxes.length;
+  document.getElementById('score-bar').textContent=(!isMC&&tot)?rc+'/'+tot+' revealed':'';
   const sc=Object.keys(starred).length;
   document.getElementById('star-count').textContent=sc?'★ '+sc+' starred':'';
   document.getElementById('star-badge').textContent=sc||'';
@@ -268,7 +460,7 @@ function renderStarredPanel(){
   const items=Object.values(starred);
   const list=document.getElementById('starred-list');
   if(!items.length){
-    list.innerHTML='<div style="color:#664422;font-size:12px;grid-column:1/-1">No starred structures yet. Reveal a label and click ☆ to flag it.</div>';
+    list.innerHTML='<div style="color:#664422;font-size:12px;grid-column:1/-1">No starred structures yet.</div>';
     return;
   }
   const byPage={};
@@ -282,18 +474,36 @@ function renderStarredPanel(){
   ).join('');
 }
 
-function goTo(i){ci=i;render();}
-function nextPage(){if(ci<PAGES.length-1){ci++;render();}}
-function prevPage(){if(ci>0){ci--;render();}}
+function goTo(i){
+  ci=i;
+  if(mode==='mc')startMC();
+  else render();
+}
+function nextPage(){
+  if(ci<PAGES.length-1){
+    ci++;
+    if(mode==='mc')startMC();
+    else render();
+  }
+}
+function prevPage(){
+  if(ci>0){
+    ci--;
+    if(mode==='mc')startMC();
+    else render();
+  }
+}
 
 document.addEventListener('keydown',e=>{
+  if(mode==='mc')return;
   if(e.key==='ArrowRight')nextPage();
   else if(e.key==='ArrowLeft')prevPage();
   else if(e.key==='r'||e.key==='R')revealAll();
   else if(e.key==='Escape')resetPage();
 });
 window.addEventListener('resize',()=>render());
-render();
+
+setMode('cover');
 </script>
 </body>
 </html>
